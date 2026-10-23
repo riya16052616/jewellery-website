@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discover jewellery, crafted with care and designed for everyday moments.">
+  <title>Tanishq — Wear Your Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="announcement">
+    <div class="announcement-track">
+      <div class="announcement-group">
+        <span>COMPLIMENTARY SHIPPING ON ORDERS ABOVE ₹25,000</span><b>•</b>
+        <span>LIFETIME EXCHANGE PROMISE</span><b>•</b>
+        <span>CERTIFIED GOLD &amp; DIAMONDS</span><b>•</b>
+      </div>
+      <div class="announcement-group" aria-hidden="true">
+        <span>COMPLIMENTARY SHIPPING ON ORDERS ABOVE ₹25,000</span><b>•</b>
+        <span>LIFETIME EXCHANGE PROMISE</span><b>•</b>
+        <span>CERTIFIED GOLD &amp; DIAMONDS</span><b>•</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg container-fluid header-inner">
+      <a class="navbar-brand brand-mark" href="#home" aria-label="Tavra Gold and Diamonds home">
+        <img class="brand-combined-logo" src="assets/tavra-luxury-logo.png" alt="TAVRA Gold &amp; Diamonds">
+      </a>
+
+      <button class="navbar-toggler" type="button"
+        data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto header-links">
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=all">NEW ARRIVALS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=ring">RINGS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=earring">EARRINGS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=necklace">NECKLACES</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=bracelet">BRACELETS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=all">COLLECTIONS</a></li>
+          <li class="nav-item"><a class="nav-link" href="story.html">OUR STORY</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-tools">
+        <button class="icon-btn" id="wishlistButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#wishlistDrawer" aria-label="Open wishlist">
+          <i class="bi bi-heart"></i><span class="tool-count" id="wishlistCount">0</span>
+        </button>
+        <button class="icon-btn" type="button" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
+          <i class="bi bi-search"></i>
+        </button>
+        <button class="icon-btn" type="button" data-bs-toggle="modal" data-bs-target="#accountModal" aria-label="Account">
+          <i class="bi bi-person"></i>
+        </button>
+        <button class="icon-btn bag-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-label="Shopping bag">
+          <i class="bi bi-bag"></i><span class="tool-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-reference-screen"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">THE ART OF BEING YOU</p>
+        <h1>Wear<br><em>your story.</em></h1>
+        <p class="hero-sub">Jewellery that feels like<br>it was always yours.</p>
+        <a class="pill-link" href="#collections">DISCOVER THE EDIT <span>↗</span></a>
+        <div class="hero-foot"><span>TIMELESS BY NATURE</span></div>
+      </div>
+      <div class="hero-image hero-image-one" role="img" aria-label="Gold jewellery"></div>
+      <div class="hero-image hero-image-two" role="img" aria-label="Close-up of jewellery"></div>
+    </section>
+
+    <section class="service-strip container-fluid">
+      <div class="row g-0 text-center">
+        <div class="col-6 col-md-3 service"><span>✧</span><strong>Made with care</strong><small>For your everyday</small></div>
+        <div class="col-6 col-md-3 service"><span>◇</span><strong>Lifetime exchange</strong><small>Peace of mind, always</small></div>
+        <div class="col-6 col-md-3 service"><span>✳</span><strong>Certified purity</strong><small>Trust in every detail</small></div>
+        <div class="col-6 col-md-3 service"><span>♧</span><strong>Personalised for you</strong><small>Make it your own</small></div>
+      </div>
+    </section>
+
+    <section id="collections" class="section container section-pad">
+      <p class="eyebrow gold-text">A WORLD OF YOUR OWN</p>
+      <h2>Find your signature.</h2>
+      <div class="signature-grid">
+        <a class="signature-card signature-large img-necklace" href="collection.html?category=necklace"><span>Necklaces <b>↗</b></span></a>
+        <a class="signature-card img-ring" href="collection.html?category=ring"><span>Rings <b>↗</b></span></a>
+        <a class="signature-card img-earrings" href="collection.html?category=earring"><span>Earrings <b>↗</b></span></a>
+        <a class="signature-card img-bracelet" href="collection.html?category=bracelet"><span>Bracelets <b>↗</b></span></a>
+      </div>
+    </section>
+
+    <!-- CENTERED RECTANGULAR BRACELET SLIDER -->
+    <section class="promo-band" aria-label="Featured bracelet designs">
+      <div class="promo-carousel">
+        <div class="promo-window">
+          <div class="promo-track" id="heroTrack">
+            <a class="promo-slide promo-bracelet-pear" href="collection.html?category=bracelet">
+              <span class="promo-copy"><small>THE STATEMENT EDIT</small><strong>Pear-cut<br>tennis bracelet</strong><em>EXPLORE BRACELETS ↗</em></span>
+            </a>
+            <a class="promo-slide promo-bracelet-bangle" href="collection.html?category=bracelet">
+              <span class="promo-copy"><small>GOLD, WITH A TWIST</small><strong>Diamond bangle<br>duo</strong><em>EXPLORE BRACELETS ↗</em></span>
+            </a>
+            <a class="promo-slide promo-bracelet-solo" href="collection.html?category=bracelet">
+              <span class="promo-copy"><small>LESS, BUT LOVELY</small><strong>Single-stone<br>chain bracelet</strong><em>EXPLORE BRACELETS ↗</em></span>
+            </a>
+            <a class="promo-slide promo-bracelet-double" href="collection.html?category=bracelet">
+              <span class="promo-copy"><small>MADE FOR LAYERING</small><strong>Double fine<br>chain bracelet</strong><em>EXPLORE BRACELETS ↗</em></span>
+            </a>
+          </div>
+        </div>
+        <div class="hero-controls promo-controls">
+          <span id="heroCounter" aria-live="polite">01 / 04</span>
+          <button class="hero-prev" type="button" aria-label="Previous slides"><i class="bi bi-arrow-left"></i></button>
+          <button class="hero-next" type="button" aria-label="Next slides"><i class="bi bi-arrow-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <div class="category-ribbon">GOLD · EVERYDAY WEAR · HIGH JEWELLERY · DIAMONDS · BRIDAL · CELEBRATIONS · HANDCRAFTED</div>
+
+    <section id="edit" class="section container section-pad">
+      <div class="section-heading">
+        <div><p class="eyebrow gold-text">CURATED FOR YOU</p><h2>The edit.</h2></div>
+        <a class="outline-link" href="#lookbook">VIEW LOOKBOOK ↗</a>
+      </div>
+
+      <div class="catalog-controls">
+        <label class="catalog-search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input id="productSearch" type="search" placeholder="Search jewellery..." aria-label="Search products">
+        </label>
+        <label class="catalog-select">
+          <span>Category</span>
+          <select id="categoryFilter" aria-label="Filter by category">
+            <option value="all">All jewellery</option><option value="ring">Rings</option>
+            <option value="earring">Earrings</option><option value="necklace">Necklaces</option>
+            <option value="bracelet">Bracelets</option><option value="diamond">Diamonds</option>
+          </select>
+        </label>
+        <label class="catalog-select">
+          <span>Sort by</span>
+          <select id="sortProducts" aria-label="Sort products">
+            <option value="featured">Featured</option><option value="name-asc">Name: A–Z</option>
+            <option value="name-desc">Name: Z–A</option><option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+          </select>
+        </label>
+        <button id="clearFilters" class="catalog-clear" type="button">CLEAR</button>
+        <p id="productResultCount" class="catalog-result-count" aria-live="polite">Loading jewellery…</p>
+      </div>
+
+      <div class="row g-3 product-grid" id="productGrid">
+        <div class="col-6 col-md-3 product-item" data-name="Aria Eternal Ring" data-category="ring diamond">
+          <article class="product-card">
+            <div class="product-image product-ring">
+              <button class="heart" type="button" data-wishlist="Aria Eternal Ring" aria-label="Add Aria Eternal Ring to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Aria Eternal Ring</p><small>DIAMOND · GOLD</small>
+            <button class="add-to-bag" type="button" data-add="Aria Eternal Ring">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="The Luxe Layering Chain" data-category="necklace">
+          <article class="product-card">
+            <div class="product-image product-neck">
+              <button class="heart" type="button" data-wishlist="The Luxe Layering Chain" aria-label="Add The Luxe Layering Chain to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>The Luxe Layering Chain</p><small>18K GOLD</small>
+            <button class="add-to-bag" type="button" data-add="The Luxe Layering Chain">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="Dainty Cluster Chain Bracelet" data-category="bracelet">
+          <article class="product-card">
+            <div class="product-image product-blue">
+              <button class="heart" type="button" data-wishlist="Dainty Cluster Chain Bracelet" aria-label="Add Dainty Cluster Chain Bracelet to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Dainty Cluster Chain Bracelet</p><small>DIAMOND · 14K GOLD</small>
+            <button class="add-to-bag" type="button" data-add="Dainty Cluster Chain Bracelet">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="Solitaire Luxe" data-category="ring diamond">
+          <article class="product-card">
+            <div class="product-image product-ring-band">
+              <button class="heart" type="button" data-wishlist="Solitaire Luxe" aria-label="Add Solitaire Luxe to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Solitaire Luxe</p><small>PLATINUM</small>
+            <button class="add-to-bag" type="button" data-add="Solitaire Luxe">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="Celeste Halo Ring" data-category="ring diamond">
+          <article class="product-card">
+            <div class="product-image product-ring-halo">
+              <button class="heart" type="button" data-wishlist="Celeste Halo Ring" aria-label="Add Celeste Halo Ring to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Celeste Halo Ring</p><small>DIAMOND · 18K GOLD</small>
+            <button class="add-to-bag" type="button" data-add="Celeste Halo Ring">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="Rose Gold Eternity Band" data-category="ring">
+          <article class="product-card">
+            <div class="product-image product-ring-gold">
+              <button class="heart" type="button" data-wishlist="Rose Gold Eternity Band" aria-label="Add Rose Gold Eternity Band to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Rose Gold Eternity Band</p><small>ROSE GOLD · 14K</small>
+            <button class="add-to-bag" type="button" data-add="Rose Gold Eternity Band">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+        <div class="col-6 col-md-3 product-item" data-name="Emerald Muse Ring" data-category="ring diamond">
+          <article class="product-card">
+            <div class="product-image product-ring-emerald">
+              <button class="heart" type="button" data-wishlist="Emerald Muse Ring" aria-label="Add Emerald Muse Ring to wishlist"><i class="bi bi-heart"></i></button>
+            </div>
+            <p>Emerald Muse Ring</p><small>EMERALD CUT · DIAMOND</small>
+            <button class="add-to-bag" type="button" data-add="Emerald Muse Ring">ADD TO BAG <i class="bi bi-arrow-up-right"></i></button>
+          </article>
+        </div>
+      </div>
+
+      <p id="noProductResults" class="catalog-empty" role="status" hidden>No matching jewellery found. Try another search or clear your filters.</p>
+
+      <a class="banner-light" href="#craft">
+        <div class="banner-light-copy">
+          <p class="eyebrow">TANISHQ / EDIT</p>
+          <h2>Light,<br>captured.</h2>
+          <p class="banner-description">A quieter editorial moment from the Moonlit collection.</p>
+          <span class="banner-cta">DISCOVER ↗</span>
+        </div>
+      </a>
+    </section>
+
+    <section id="craft" class="split-story">
+      <div class="split-image" role="img" aria-label="Jewellery craftsmanship"></div>
+      <div class="split-copy">
+        <p class="eyebrow gold-text">OUR PROMISE</p>
+        <h2>Crafted in India.<br>Designed for<br>everywhere.</h2>
+        <blockquote>“A jewel should feel like<br>a memory you can wear.”</blockquote>
+        <p>Thoughtful design, exceptional craftsmanship and a little everyday magic — made to become part of your story.</p>
+        <a href="#stories" class="dark-button">OUR CRAFTSMANSHIP ↗</a>
+      </div>
+    </section>
+
+    <section class="dark-feature">
+      <div class="dark-feature-inner">
+        <div class="dark-feature-copy">
+          <p class="eyebrow gold-text">CHAPTER 06 / THE MOONLIT EDIT</p>
+          <h2>Light, captured in<br>gold.</h2>
+          <p>A sculptural collection inspired by moonlight. Soft curves, fluid forms and diamonds that move with every gesture.</p>
+          <a href="#lookbook" class="moonlit-cta">EXPLORE MOONLIT ↗</a>
+        </div>
+        <div class="dark-feature-image" role="img" aria-label="Gold jewellery editorial"></div>
+        <div class="floating-note">
+          <strong>Moonlit No.</strong><span class="note-number">01</span>
+          <span>18K yellow gold ·<br>diamonds</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="lookbook" class="section container section-pad">
+      <p class="eyebrow gold-text">STYLE NOTES</p>
+      <h2>The jewellery lookbook.</h2>
+      <div class="lookbook-grid">
+        <a class="lookbook-item look-pearl" href="collection.html?category=necklace"><span>Everyday heirlooms ↗</span></a>
+        <a class="lookbook-item look-layer" href="collection.html?category=necklace"><span>Layers of you ↗</span></a>
+        <a class="lookbook-item look-gem" href="collection.html?category=bracelet"><span>Colour stories ↗</span></a>
+        <a class="lookbook-item look-solitaire" href="collection.html?category=ring"><span>Modern classics ↗</span></a>
+        <a class="lookbook-item look-gold" href="collection.html?category=earring"><span>Golden hour ↗</span></a>
+        <a class="lookbook-item look-ice" href="collection.html?category=bracelet"><span>Pure brilliance ↗</span></a>
+      </div>
+      <div class="process">
+        <p class="eyebrow gold-text">MADE TO MEAN MORE</p>
+        <h2>From sketch to heirloom.</h2>
+        <div class="row g-3">
+          <div class="col-6 col-md-3 process-step"><span>✎</span><h3>Thoughtfully imagined</h3><p>Every design starts with a feeling.</p></div>
+          <div class="col-6 col-md-3 process-step"><span>♧</span><h3>Shaped by hand</h3><p>Made with patience and precision.</p></div>
+          <div class="col-6 col-md-3 process-step"><span>✦</span><h3>Set for brilliance</h3><p>Details that catch the light.</p></div>
+          <div class="col-6 col-md-3 process-step"><span>♧</span><h3>Yours for always</h3><p>Crafted to become a keepsake.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stories" class="testimonials">
+      <div class="container">
+        <p class="eyebrow gold-text">WORDS TO KEEP</p>
+        <h2>Stories that stay.</h2>
+        <div class="row g-3">
+          <div class="col-md-4"><article class="quote-card"><div>★★★★★</div><p>“The little details make it feel personal. It’s become the piece I reach for every single day.”</p><small>— A STORY WORTH KEEPING</small></article></div>
+          <div class="col-md-4"><article class="quote-card"><div>★★★★★</div><p>“A beautiful reminder of a moment I never want to forget. Thoughtful, timeless and entirely me.”</p><small>— MADE FOR A MOMENT</small></article></div>
+          <div class="col-md-4"><article class="quote-card"><div>★★★★★</div><p>“The craftsmanship is extraordinary. I know this is something I’ll treasure for years.”</p><small>— A FOREVER FAVOURITE</small></article></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="social" class="section container section-pad">
+      <div class="section-heading">
+        <div><p class="eyebrow gold-text">A LITTLE INSPIRATION</p><h2>@tanishq.jewels</h2></div>
+        <a class="outline-link" href="#newsletter">GET IN TOUCH ↗</a>
+      </div>
+      <div class="social-grid">
+        <div class="social-img product-ring"></div><div class="social-img product-neck"></div>
+        <div class="social-img product-blue"></div><div class="social-img product-diamond"></div>
+        <div class="social-img img-earrings"></div><div class="social-img img-bracelet"></div>
+      </div>
+    </section>
+
+    <section class="section container section-pad values-section">
+      <p class="eyebrow gold-text">THE DIFFERENCE</p>
+      <h2>Luxury, beyond the jewel.</h2>
+      <div class="row g-0 values-grid">
+        <div class="col-6 col-md-3 value"><span>✧</span><h3>Thoughtful design</h3><p>Distinctive pieces that feel like you.</p></div>
+        <div class="col-6 col-md-3 value"><span>◇</span><h3>Signature quality</h3><p>Considered in every detail.</p></div>
+        <div class="col-6 col-md-3 value"><span>✦</span><h3>Trust, always</h3><p>Confidence you can feel.</p></div>
+        <div class="col-6 col-md-3 value"><span>♧</span><h3>Made to last</h3><p>Heirlooms for your next chapter.</p></div>
+      </div>
+    </section>
+
+    <section class="off-grid">
+      <div>
+        <p class="eyebrow gold-text">A DIFFERENT KIND OF BRILLIANCE</p>
+        <h2>Jewellery,<br><em>off the grid.</em></h2>
+        <p>For the ones who write their own rules.</p>
+      </div>
+      <div class="off-grid-icons">
+        <span>✦<small>Made with meaning</small></span><span>◇<small>Unexpected details</small></span>
+        <span>♧<small>Modern heirlooms</small></span><span>✧<small>Always individual</small></span>
+      </div>
+    </section>
+
+    <section id="newsletter" class="newsletter container">
+      <div>
+        <p class="eyebrow gold-text">NOTES FROM OUR WORLD</p>
+        <h2>Be first to know.</h2>
+        <p>New stories, considered collections and little things worth keeping.</p>
+      </div>
+      <form id="newsletterForm" class="newsletter-form">
+        <label class="visually-hidden" for="email">Email address</label>
+        <input id="email" type="email" placeholder="Your email address" required>
+        <button type="submit" aria-label="Subscribe">↗</button>
+      </form>
+      <p class="form-message" id="formMessage" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-12 col-md-4 footer-brand">
+          <a class="brand-mark" href="#home">T<span>✦</span></a>
+          <p>Jewellery that holds a little piece of you. Crafted with care, made to be treasured.</p>
+          <div class="social-links">
+            <a href="#social" aria-label="Instagram">◎</a>
+            <a href="#social" aria-label="Facebook">f</a>
+            <a href="#social" aria-label="Pinterest">p</a>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <h3>EXPLORE</h3>
+          <a href="collection.html?category=all">Collections</a><a href="#edit">Gold jewellery</a>
+          <a href="#edit">Diamond jewellery</a><a href="#lookbook">Lookbook</a>
+        </div>
+        <div class="col-6 col-md-3">
+          <h3>HELP &amp; SUPPORT</h3>
+          <a href="#newsletter">Contact us</a><a href="#newsletter">Shipping &amp; delivery</a>
+          <a href="#newsletter">Returns &amp; exchange</a><a href="#newsletter">Care guide</a>
+        </div>
+        <div class="col-6 col-md-3">
+          <h3>ABOUT</h3>
+          <a href="story.html">Our craftsmanship</a><a href="story.html">Our story</a>
+          <a href="#newsletter">Store locator</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Jewellery Stories. All rights reserved.</span>
+        <span>Privacy · Terms · Accessibility</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content luxury-modal">
+        <div class="modal-header">
+          <h2 class="modal-title" id="searchTitle">Find your piece.</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="searchForm" class="search-form">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input id="searchInput" type="search" placeholder="Search rings, necklaces, diamonds..." aria-label="Search jewellery">
+            <button type="submit">SEARCH</button>
+          </form>
+          <p id="searchMessage" class="interaction-message" aria-live="polite">Try Rings, Necklaces, Bracelets or Diamonds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content luxury-modal">
+        <div class="modal-header">
+          <h2 class="modal-title" id="accountTitle">Welcome back.</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Use this demo form to try the account interface.</p>
+          <form id="accountForm">
+            <label for="accountEmail" class="form-label">Email address</label>
+            <input class="form-control mb-3" id="accountEmail" type="email" placeholder="you@example.com" required>
+            <button class="dark-button" type="submit">CONTINUE <i class="bi bi-arrow-right"></i></button>
+            <p id="accountMessage" class="interaction-message" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end cart-drawer wishlist-drawer" tabindex="-1" id="wishlistDrawer" aria-labelledby="wishlistTitle">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title" id="wishlistTitle">Your wishlist <span id="wishlistHeadingCount">(0)</span></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="wishlistItems"><p class="empty-cart">Your wishlist is waiting for something beautiful.</p></div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title" id="cartTitle">Your bag <span id="cartHeadingCount">(0)</span></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="cartItems"><p class="empty-cart">Your bag is waiting for something beautiful.</p></div>
+      <div class="cart-bottom">
+        <p>This is a demo store. No payment will be collected.</p>
+        <button id="checkoutButton" class="dark-button w-100" type="button">CONTINUE TO CHECKOUT <i class="bi bi-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="siteToast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+      <div class="toast-header">
+        <i class="bi bi-stars me-2"></i><strong class="me-auto">Jewellery Stories</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" id="toastMessage">Added to your bag.</div>
+    </div>
+  </div>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

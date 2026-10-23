@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="View jewellery details and product information.">
+  <title>Jewellery Details — Tanishq</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="product-page">
+  <div class="announcement"><div class="announcement-track">
+    <span>COMPLIMENTARY SHIPPING ON ORDERS ABOVE ₹25,000</span><b>•</b>
+    <span>LIFETIME EXCHANGE PROMISE</span><b>•</b>
+    <span>CERTIFIED GOLD &amp; DIAMONDS</span>
+  </div></div>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg container-fluid header-inner">
+      <a class="navbar-brand brand-mark" href="index.html" aria-label="Home">T<span>✦</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto header-links">
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=all">NEW ARRIVALS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=ring">RINGS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=earring">EARRINGS</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=necklace">NECKLACES</a></li>
+          <li class="nav-item"><a class="nav-link" href="collection.html?category=bracelet">BRACELETS</a></li>
+          <li class="nav-item"><a class="nav-link" href="story.html">OUR STORY</a></li>
+        </ul>
+        <a class="outline-link" href="index.html">BACK TO HOME ↗</a>
+      </div>
+      <div class="nav-tools">
+        <button class="icon-btn" id="wishlistButton" type="button" data-bs-toggle="offcanvas" data-bs-target="#wishlistDrawer" aria-label="Open wishlist">
+          <i class="bi bi-heart"></i><span class="tool-count" id="wishlistCount">0</span>
+        </button>
+        <button class="icon-btn bag-icon" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-label="Shopping bag">
+          <i class="bi bi-bag"></i><span class="tool-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container product-detail-wrap">
+    <nav class="product-breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">HOME</a><span>/</span>
+      <a id="detailCategoryLink" href="collection.html?category=all">JEWELLERY</a><span>/</span>
+      <span id="detailBreadcrumbName">PRODUCT</span>
+    </nav>
+
+    <section class="product-detail-layout">
+      <div class="detail-gallery">
+        <div id="detailImage" class="detail-main-image" role="img" aria-label="Selected jewellery item"></div>
+        <p class="detail-image-caption">A closer look at your selected piece</p>
+      </div>
+
+      <div class="detail-information">
+        <button id="detailWishlist" class="detail-wishlist" type="button" aria-label="Add to wishlist" data-wishlist=""><i class="bi bi-heart"></i></button>
+        <p class="eyebrow gold-text">MADE TO BE YOURS</p>
+        <h1 id="detailName">Jewellery</h1>
+        <p id="detailPrice" class="detail-price"></p>
+        <p class="tax-note">Demo sample price · taxes included</p>
+
+        <div class="detail-offer"><span>✧</span> Thoughtful design, made for everyday moments.</div>
+
+        <form id="deliveryForm" class="delivery-check">
+          <label for="pincode"><i class="bi bi-geo-alt"></i> Check delivery</label>
+          <div class="delivery-input-row">
+            <input id="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Enter 6-digit pincode" aria-label="Six-digit delivery pincode" required>
+            <button type="submit">CHECK</button>
+          </div>
+          <p id="deliveryMessage" aria-live="polite">Enter your pincode to check delivery availability.</p>
+        </form>
+
+        <p id="detailDescription" class="detail-material"></p>
+
+        <label id="ringSizeGroup" class="ring-size-group" for="ringSize" hidden>
+          <span>Ring size</span>
+          <select id="ringSize">
+            <option value="">Select size</option>
+            <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </label>
+
+        <div class="detail-actions">
+          <button id="detailAddToBag" class="detail-primary" type="button" data-add="">ADD TO BAG</button>
+          <button id="detailBuyNow" class="detail-secondary" type="button">BUY NOW</button>
+        </div>
+        <p id="detailActionMessage" class="detail-action-message" aria-live="polite">Demo store: checkout is not enabled.</p>
+      </div>
+    </section>
+
+    <section class="detail-lower-grid">
+      <div class="detail-specifications">
+        <h2>Product details</h2>
+        <dl>
+          <div><dt>Product</dt><dd id="specProductName">Jewellery</dd></div>
+          <div><dt>Category</dt><dd id="specCategory">Jewellery</dd></div>
+          <div><dt>Style</dt><dd id="specStyle">Made for everyday moments</dd></div>
+          <div><dt>Price</dt><dd id="specPrice"></dd></div>
+        </dl>
+        <p class="spec-note">This is a demonstration storefront. Product prices and descriptions are sample information.</p>
+      </div>
+      <aside class="detail-promise">
+        <h2>Our promise</h2>
+        <div><span>↻</span><p><strong>Lifetime exchange</strong><br>Support for the pieces you treasure.</p></div>
+        <div><span>✧</span><p><strong>Considered craftsmanship</strong><br>Thoughtful details in every design.</p></div>
+        <div><span>◇</span><p><strong>Complimentary shipping</strong><br>On orders above ₹25,000.</p></div>
+      </aside>
+    </section>
+
+    <section class="similar-products">
+      <h2>Discover more</h2>
+      <p>Explore other designs from this collection.</p>
+      <a id="moreFromCategory" class="outline-link" href="collection.html?category=all">VIEW COLLECTION ↗</a>
+    </section>
+  </main>
+
+  <div class="offcanvas offcanvas-end cart-drawer wishlist-drawer" tabindex="-1" id="wishlistDrawer" aria-labelledby="wishlistTitle">
+    <div class="offcanvas-header"><h2 class="offcanvas-title" id="wishlistTitle">Your wishlist <span id="wishlistHeadingCount">(0)</span></h2><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button></div>
+    <div class="offcanvas-body"><div id="wishlistItems"><p class="empty-cart">Your wishlist is waiting for something beautiful.</p></div></div>
+  </div>
+  <div class="offcanvas offcanvas-end cart-drawer" tabindex="-1" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="offcanvas-header">
+      <h2 class="offcanvas-title" id="cartTitle">Your bag <span id="cartHeadingCount">(0)</span></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="cartItems"><p class="empty-cart">Your bag is waiting for something beautiful.</p></div>
+      <div class="cart-bottom">
+        <p>This is a demo store. No payment will be collected.</p>
+        <button id="checkoutButton" class="dark-button w-100" type="button">CONTINUE TO CHECKOUT <i class="bi bi-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="siteToast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+      <div class="toast-header"><strong class="me-auto">Jewellery Stories</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>
+      <div class="toast-body" id="toastMessage">Added to your bag.</div>
+    </div>
+  </div>
+
+  <footer class="site-footer"><div class="container footer-bottom">
+    <a class="brand-mark" href="index.html">T<span>✦</span></a>
+    <span>© 2026 Jewellery Stories. All rights reserved.</span>
+  </div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+  <script src="product-detail.js"></script>
+</body>
+</html>
