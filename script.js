@@ -702,7 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
           description: button.dataset.description || (product && $("small", product)?.textContent.trim()) || "JEWELLERY",
           image: button.dataset.image || (imageElement ? getComputedStyle(imageElement).backgroundImage : "")
         });
-        showToast(`${name} added to wishlist.`);
+        showToast(`${name} added to your wishlist.`);
       }
 
       saveWishlist();
@@ -738,6 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(item => [
         item.name,
         {
+          productId: item.productId || null,
           name: item.name,
           quantity: Math.max(1, Number(item.quantity) || 1),
           price: Math.max(0, Number(item.price) || 0)
@@ -836,81 +837,67 @@ document.addEventListener("DOMContentLoaded", () => {
     cartItems.appendChild(totalRow);
   }
 
-  $$("[data-add]").forEach(button => {
-    button.addEventListener("click", () => {
-      const name = button.dataset.add;
+  document.addEventListener("click", event => {
+    const button =
+      event.target instanceof Element
+        ? event.target.closest("[data-add]")
+        : null;
+    if (!button) return;
 
-      if (!name) return;
+    const name = button.dataset.add;
+    if (!name) return;
 
-      if (button.id === "detailAddToBag" && button.dataset.category === "ring" && !$("#ringSize")?.value) {
-        const actionMessage = $("#detailActionMessage");
-        if (actionMessage) actionMessage.textContent = "Please select a ring size first.";
-        $("#ringSize")?.focus();
-        return;
-      }
-
-      const product = button.closest(".product-item");
-      const price = Math.max(
-        0,
-        Number(button.dataset.price || product?.dataset.price || 0)
-      );
-
-      if (cart.has(name)) {
-        cart.get(name).quantity += 1;
-      } else {
-        cart.set(name, {
-          name,
-          quantity: 1,
-          price
-        });
-      }
-
-      saveCart();
-      renderCart();
-      showToast(`${name} added to your bag.`);
+    if (
+      button.id === "detailAddToBag" &&
+      button.dataset.category === "ring" &&
+      !$("#ringSize")?.value
+    ) {
       const actionMessage = $("#detailActionMessage");
-      if (actionMessage && button.id === "detailAddToBag") {
-        actionMessage.textContent = `${name} added to your bag.`;
+      if (actionMessage) {
+        actionMessage.textContent = "Please select a ring size first.";
       }
-    });
+      $("#ringSize")?.focus();
+      return;
+    }
+
+    const product = button.closest(".product-item");
+    const price = Math.max(
+      0,
+      Number(button.dataset.price || product?.dataset.price || 0)
+    );
+
+    const productId =
+      product?.dataset.productId || button.dataset.productId || null;
+    if (cart.has(name)) {
+      const cartItem = cart.get(name);
+      cartItem.quantity += 1;
+      if (productId) cartItem.productId = productId;
+    } else {
+      cart.set(name, { productId, name, quantity: 1, price });
+    }
+
+    saveCart();
+    renderCart();
+    showToast(`${name} added to your bag.`);
+
+    const actionMessage = $("#detailActionMessage");
+    if (actionMessage && button.id === "detailAddToBag") {
+      actionMessage.textContent = `${name} added to your bag.`;
+    }
   });
 
   if (checkoutButton) {
     checkoutButton.addEventListener("click", () => {
       if (cart.size === 0) {
         showToast("Your bag is empty.");
-      } else {
-        showToast(
-          "Demo checkout only. Payment is not configured."
-        );
+        return;
       }
+
+      window.location.href = "checkout.html";
     });
   }
 
   renderCart();
-
-  // ==========================================
-  // ACCOUNT FORM
-  // ==========================================
-
-  const accountForm = $("#accountForm");
-  const accountEmail = $("#accountEmail");
-  const accountMessage = $("#accountMessage");
-
-  if (accountForm) {
-    accountForm.addEventListener("submit", event => {
-      event.preventDefault();
-
-      if (!accountForm.reportValidity()) return;
-
-      if (accountMessage) {
-        accountMessage.textContent =
-          `Demo only: no account was created for ${
-            accountEmail.value.trim()
-          }.`;
-      }
-    });
-  }
 
   // ==========================================
   // NEWSLETTER FORM
