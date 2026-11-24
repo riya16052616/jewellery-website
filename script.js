@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
 
   const productGrid = $("#productGrid");
+  const useApiCatalog = document.body.dataset.catalogSource === "api";
   const productSearch = $("#productSearch");
   const categoryFilter = $("#categoryFilter");
   const sortProducts = $("#sortProducts");
@@ -129,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   ];
 
-  if (productGrid) {
+  if (productGrid && !useApiCatalog) {
     const existingItems = $$(".product-item", productGrid);
     let nextIndex = existingItems.length;
 
@@ -276,6 +277,9 @@ document.addEventListener("DOMContentLoaded", () => {
     link.searchParams.set("category", (product.dataset.category || "jewellery").split(/\s+/)[0]);
     link.searchParams.set("price", product.dataset.price || "0");
     link.searchParams.set("description", $("small", product)?.textContent || "JEWELLERY");
+    if (product.dataset.productId) {
+      link.searchParams.set("productId", product.dataset.productId);
+    }
 
     if (image) {
       const background = window.getComputedStyle(image).backgroundImage;
@@ -313,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function filterAndSortProducts() {
-    if (!productGrid) return;
+    if (!productGrid || useApiCatalog) return;
 
     const rawQuery = (productSearch?.value || "")
       .trim()
@@ -328,7 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
       diamonds: "diamond"
     };
 
-    const query = categoryAliases[rawQuery] || rawQuery;
+    const queryTerms = rawQuery
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(term => categoryAliases[term] || term);
     const category = categoryFilter?.value || "all";
     const sort = sortProducts?.value || "featured";
 
@@ -350,9 +357,10 @@ document.addEventListener("DOMContentLoaded", () => {
           .split(/[^a-z0-9]+/)
           .filter(Boolean);
 
-      const matchesSearch =
-        query === "" ||
-        searchableWords.some(word => word.startsWith(query));
+      const matchesSearch = queryTerms.length === 0 ||
+        queryTerms.every(term =>
+          searchableWords.some(word => word.startsWith(term))
+        );
 
       const matchesCategory =
         category === "all" ||
@@ -480,6 +488,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================
   // HEADER SEARCH MODAL
   // ==========================================
+
+  const headerSearchForm = $("#headerSearchForm");
+  const headerSearchInput = $("#headerSearchInput");
+
+  // Send homepage searches to the separate, database-backed collection page.
+  if (headerSearchForm && document.body.dataset.catalogSource !== "api") {
+    headerSearchForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const query = headerSearchInput?.value.trim() || "";
+
+      if (!query) {
+        headerSearchInput?.focus();
+        return;
+      }
+
+      const destination = new URL("collection.html", window.location.href);
+      destination.searchParams.set("search", query);
+      window.location.href = destination.toString();
+    });
+  }
 
   const searchForm = $("#searchForm");
   const searchInput = $("#searchInput");
@@ -676,14 +704,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function makeProductUrl(item) {
     const params = new URLSearchParams();
-    ["name", "category", "price", "description", "image"].forEach(key => {
+    ["productId", "name", "category", "price", "description", "image"].forEach(key => {
       if (item[key]) params.set(key, item[key]);
     });
     return `product.html?${params.toString()}`;
   }
 
-  $$("[data-wishlist]").forEach(button => {
-    button.addEventListener("click", () => {
+  document.addEventListener("click", event => {
+      const button = event.target instanceof Element
+        ? event.target.closest("[data-wishlist]")
+        : null;
+      if (!button) return;
       const name = button.dataset.wishlist;
 
       if (wishlist.has(name)) {
@@ -697,6 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const priceText = product && $("[data-price]", product)?.dataset.price;
         wishlistDetails.set(name, {
           name,
+          productId: button.dataset.productId || (product && product.dataset.productId) || null,
           category: button.dataset.category || (product && product.dataset.category.split(/\s+/)[0]) || "jewellery",
           price: button.dataset.price || (product && product.dataset.price) || priceText || "",
           description: button.dataset.description || (product && $("small", product)?.textContent.trim()) || "JEWELLERY",
@@ -707,23 +739,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
       saveWishlist();
       renderWishlist();
-    });
   });
 
   renderWishlist();
 
-  // ==========================================
+    // ==========================================
   // SHOPPING BAG
   // ==========================================
 
   const cartStorageKey = "jewelleryStoriesCart";
   let savedCart = [];
+
   try {
     savedCart = JSON.parse(localStorage.getItem(cartStorageKey) || "[]");
     if (!Array.isArray(savedCart)) savedCart = [];
   } catch {
     savedCart = [];
   }
+
   if (savedCart.length === 0) {
     try {
       savedCart = Array.isArray(windowState.cart) ? windowState.cart : [];
@@ -740,11 +773,12 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           productId: item.productId || null,
           name: item.name,
-          quantity: Math.max(1, Number(item.quantity) || 1),
+          quantity: Math.min(10, Math.max(1, Number(item.quantity) || 1)),
           price: Math.max(0, Number(item.price) || 0)
         }
       ])
   );
+
   const cartCount = $("#cartCount");
   const cartHeadingCount = $("#cartHeadingCount");
   const cartItems = $("#cartItems");
@@ -752,12 +786,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function saveCart() {
     const serializedCart = JSON.stringify(Array.from(cart.values()));
+
     try {
       localStorage.setItem(cartStorageKey, serializedCart);
-    } catch { /* window.name below keeps the bag during same-tab navigation */ }
+    } catch {
+      // Use window.name as a same-tab fallback.
+    }
+
     try {
-      window.name = "JewelleryStoriesState:" + JSON.stringify({ cart: Array.from(cart.values()), wishlist: Array.from(wishlistDetails.values()) });
-    } catch { /* The visible cart still works for this page session. */ }
+      window.name =
+        "JewelleryStoriesState:" +
+        JSON.stringify({
+          cart: Array.from(cart.values()),
+          wishlist: Array.from(wishlistDetails.values())
+        });
+    } catch {
+      // The visible cart still works for this page session.
+    }
   }
 
   function getCartQuantity() {
@@ -788,9 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cart.size === 0) {
       const empty = document.createElement("p");
       empty.className = "empty-cart";
-      empty.textContent =
-        "Your bag is waiting for something beautiful.";
-
+      empty.textContent = "Your bag is waiting for something beautiful.";
       cartItems.appendChild(empty);
       return;
     }
@@ -811,6 +854,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
       details.append(name, amount);
 
+      const actions = document.createElement("div");
+      actions.className = "cart-line-actions";
+
+      const quantityControls = document.createElement("div");
+      quantityControls.className = "cart-quantity";
+      quantityControls.setAttribute("aria-label", `Quantity for ${item.name}`);
+
+      const decrease = document.createElement("button");
+      decrease.type = "button";
+      decrease.dataset.cartAction = "decrease";
+      decrease.dataset.cartName = item.name;
+      decrease.setAttribute(
+        "aria-label",
+        `Decrease quantity of ${item.name}`
+      );
+      decrease.textContent = "−";
+      decrease.disabled = item.quantity <= 1;
+
+      const quantityValue = document.createElement("span");
+      quantityValue.textContent = String(item.quantity);
+      quantityValue.setAttribute("aria-live", "polite");
+
+      const increase = document.createElement("button");
+      increase.type = "button";
+      increase.dataset.cartAction = "increase";
+      increase.dataset.cartName = item.name;
+      increase.setAttribute(
+        "aria-label",
+        `Increase quantity of ${item.name}`
+      );
+      increase.textContent = "+";
+      increase.disabled = item.quantity >= 10;
+
+      quantityControls.append(decrease, quantityValue, increase);
+      actions.append(quantityControls);
+
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "cart-line-remove";
@@ -823,7 +902,8 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast(`${item.name} removed from bag.`);
       });
 
-      line.append(details, remove);
+      actions.append(remove);
+      line.append(details, actions);
       cartItems.appendChild(line);
     });
 
@@ -831,17 +911,43 @@ document.addEventListener("DOMContentLoaded", () => {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
+
     const totalRow = document.createElement("div");
     totalRow.className = "cart-total";
     totalRow.textContent = `Subtotal: ${inrFormatter.format(total)}`;
     cartItems.appendChild(totalRow);
   }
 
+  cartItems?.addEventListener("click", event => {
+    const button =
+      event.target instanceof Element
+        ? event.target.closest("[data-cart-action]")
+        : null;
+
+    if (!button) return;
+
+    const item = cart.get(button.dataset.cartName);
+    if (!item) return;
+
+    if (button.dataset.cartAction === "increase" && item.quantity < 10) {
+      item.quantity += 1;
+    } else if (
+      button.dataset.cartAction === "decrease" &&
+      item.quantity > 1
+    ) {
+      item.quantity -= 1;
+    }
+
+    saveCart();
+    renderCart();
+  });
+
   document.addEventListener("click", event => {
     const button =
       event.target instanceof Element
         ? event.target.closest("[data-add]")
         : null;
+
     if (!button) return;
 
     const name = button.dataset.add;
@@ -853,9 +959,11 @@ document.addEventListener("DOMContentLoaded", () => {
       !$("#ringSize")?.value
     ) {
       const actionMessage = $("#detailActionMessage");
+
       if (actionMessage) {
         actionMessage.textContent = "Please select a ring size first.";
       }
+
       $("#ringSize")?.focus();
       return;
     }
@@ -868,12 +976,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const productId =
       product?.dataset.productId || button.dataset.productId || null;
+
     if (cart.has(name)) {
       const cartItem = cart.get(name);
+
+      if (cartItem.quantity >= 10) {
+        showToast("You can add up to 10 of each product.");
+        return;
+      }
+
       cartItem.quantity += 1;
       if (productId) cartItem.productId = productId;
     } else {
-      cart.set(name, { productId, name, quantity: 1, price });
+      cart.set(name, {
+        productId,
+        name,
+        quantity: 1,
+        price
+      });
     }
 
     saveCart();
@@ -881,6 +1001,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`${name} added to your bag.`);
 
     const actionMessage = $("#detailActionMessage");
+
     if (actionMessage && button.id === "detailAddToBag") {
       actionMessage.textContent = `${name} added to your bag.`;
     }
@@ -924,8 +1045,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ==========================================
-  // HERO SLIDER
+    // ==========================================
+  // HERO SLIDER — CONTINUOUS SCROLL
   // ==========================================
 
   const heroTrack = $("#heroTrack");
@@ -933,47 +1054,149 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroNext = $(".hero-next");
   const heroCounter = $("#heroCounter");
   const heroSlides = heroTrack ? $$(".promo-slide", heroTrack) : [];
+  const heroWindow = $(".promo-window");
 
-  let currentSlide = 0;
+  let heroOffset = 0;
+  let heroCycleDistance = 0;
+  let heroCardStride = 0;
+  let heroAnimationFrame = null;
+  let previousHeroFrameTime = 0;
+
+  const prefersReducedMotion =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Duplicate the slides so the carousel can loop without a visible jump.
+  if (heroTrack && heroSlides.length) {
+    heroSlides.forEach(slide => {
+      const duplicate = slide.cloneNode(true);
+      duplicate.setAttribute("aria-hidden", "true");
+      duplicate.inert = true;
+      heroTrack.append(duplicate);
+    });
+  }
+
+  function layoutHeroSlides() {
+    if (!heroTrack || !heroSlides.length || !heroWindow) return;
+
+    const visibleSlides =
+      window.innerWidth <= 767 ? 1 :
+      window.innerWidth <= 991 ? 2 : 3;
+
+    const windowWidth = heroWindow.getBoundingClientRect().width;
+    const gap = parseFloat(getComputedStyle(heroTrack).gap) || 0;
+    const slideWidth =
+      (windowWidth - gap * (visibleSlides - 1)) / visibleSlides;
+
+    Array.from(heroTrack.children).forEach(slide => {
+      slide.style.flex = `0 0 ${slideWidth}px`;
+    });
+
+    heroCardStride = slideWidth + gap;
+    heroCycleDistance = heroCardStride * heroSlides.length;
+    heroOffset = heroCycleDistance ? heroOffset % heroCycleDistance : 0;
+
+    renderHeroSlide();
+  }
 
   function renderHeroSlide() {
-    if (!heroTrack || heroSlides.length === 0) return;
+    if (!heroTrack || !heroSlides.length) return;
 
-    const visibleSlides = window.innerWidth <= 767 ? 1 : window.innerWidth <= 991 ? 2 : 3;
-    const lastPosition = Math.max(0, heroSlides.length - visibleSlides);
-    currentSlide = Math.min(currentSlide, lastPosition);
-    const slideWidth = heroSlides[0].getBoundingClientRect().width;
-    const gap = parseFloat(getComputedStyle(heroTrack).gap) || 0;
-    heroTrack.style.transform = `translateX(-${(slideWidth + gap) * currentSlide}px)`;
+    heroTrack.style.transform = `translate3d(${-heroOffset}px, 0, 0)`;
 
-    if (heroCounter) {
-      heroCounter.textContent =
-        `${String(currentSlide + 1).padStart(2, "0")} / ${
-          String(heroSlides.length).padStart(2, "0")
-        }`;
+    if (heroCounter && heroCardStride) {
+      const currentSlide =
+        Math.floor(heroOffset / heroCardStride) % heroSlides.length;
+
+      const counterText =
+        `${String(currentSlide + 1).padStart(2, "0")} / ` +
+        `${String(heroSlides.length).padStart(2, "0")}`;
+
+      if (heroCounter.textContent !== counterText) {
+        heroCounter.textContent = counterText;
+      }
     }
   }
 
-  if (heroPrev) {
-    heroPrev.addEventListener("click", () => {
-      const visibleSlides = window.innerWidth <= 767 ? 1 : window.innerWidth <= 991 ? 2 : 3;
-      const lastPosition = Math.max(0, heroSlides.length - visibleSlides);
-      currentSlide = currentSlide <= 0 ? lastPosition : currentSlide - 1;
-      renderHeroSlide();
-    });
+  function animateHero(timestamp) {
+    if (!heroTrack || heroCycleDistance <= 0) return;
+
+    if (!previousHeroFrameTime) {
+      previousHeroFrameTime = timestamp;
+    }
+
+    const elapsedSeconds = Math.min(
+      (timestamp - previousHeroFrameTime) / 1000,
+      0.05
+    );
+
+    previousHeroFrameTime = timestamp;
+    heroOffset =
+      (heroOffset + elapsedSeconds * 28) % heroCycleDistance;
+
+    renderHeroSlide();
+    heroAnimationFrame = window.requestAnimationFrame(animateHero);
   }
 
-  if (heroNext) {
-    heroNext.addEventListener("click", () => {
-      const visibleSlides = window.innerWidth <= 767 ? 1 : window.innerWidth <= 991 ? 2 : 3;
-      const lastPosition = Math.max(0, heroSlides.length - visibleSlides);
-      currentSlide = currentSlide >= lastPosition ? 0 : currentSlide + 1;
-      renderHeroSlide();
-    });
+  function startHeroAutoplay() {
+    if (
+      !heroTrack ||
+      prefersReducedMotion ||
+      heroAnimationFrame !== null ||
+      heroTrack.matches(":hover") ||
+      heroTrack.contains(document.activeElement)
+    ) {
+      return;
+    }
+
+    previousHeroFrameTime = 0;
+    heroAnimationFrame = window.requestAnimationFrame(animateHero);
   }
 
-  renderHeroSlide();
-  window.addEventListener("resize", renderHeroSlide);
+  function stopHeroAutoplay() {
+    if (heroAnimationFrame !== null) {
+      window.cancelAnimationFrame(heroAnimationFrame);
+      heroAnimationFrame = null;
+    }
+
+    previousHeroFrameTime = 0;
+  }
+
+  function moveHero(direction) {
+    if (!heroCycleDistance || !heroCardStride) return;
+
+    heroOffset = direction === "next"
+      ? (heroOffset + heroCardStride) % heroCycleDistance
+      : (heroOffset - heroCardStride + heroCycleDistance) %
+        heroCycleDistance;
+
+    renderHeroSlide();
+  }
+
+  heroPrev?.addEventListener("click", () => moveHero("previous"));
+  heroNext?.addEventListener("click", () => moveHero("next"));
+
+  layoutHeroSlides();
+  startHeroAutoplay();
+
+  heroTrack?.addEventListener("mouseenter", stopHeroAutoplay);
+  heroTrack?.addEventListener("mouseleave", startHeroAutoplay);
+  heroTrack?.addEventListener("focusin", stopHeroAutoplay);
+
+  heroTrack?.addEventListener("focusout", event => {
+    if (!heroTrack.contains(event.relatedTarget)) {
+      startHeroAutoplay();
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopHeroAutoplay();
+    } else {
+      startHeroAutoplay();
+    }
+  });
+
+  window.addEventListener("resize", layoutHeroSlides);
 
   // ==========================================
   // MOBILE NAVIGATION

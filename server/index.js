@@ -99,10 +99,89 @@ app.get("/api/db-check", async (req, res) => {
 
 app.get("/api/products", async (req, res) => {
   try {
+    const rawSearch =
+      typeof req.query.search === "string"
+        ? req.query.search.trim().slice(0, 100)
+        : "";
+    const searchAliases = {
+      ring: "ring",
+      rings: "ring",
+      earring: "earring",
+      earrings: "earring",
+      necklace: "necklace",
+      necklaces: "necklace",
+      bracelet: "bracelet",
+      bracelets: "bracelet",
+      diamond: "diamond",
+      diamonds: "diamond"
+    };
+    let search = rawSearch;
+    let requestedCategory =
+      typeof req.query.category === "string"
+        ? req.query.category.trim().toLowerCase()
+        : "all";
+    const categorySearch = searchAliases[rawSearch.toLowerCase()];
+    if (requestedCategory === "all" && categorySearch) {
+      requestedCategory = categorySearch;
+      search = "";
+    } else if (categorySearch) {
+      search = categorySearch;
+    }
+    const sort =
+      typeof req.query.sort === "string" ? req.query.sort : "featured";
+    const isNewArrivals = req.query.view === "new-arrivals";
+
+    const categories = {
+      all: ["all"],
+      ring: ["ring", "rings"],
+      rings: ["ring", "rings"],
+      earring: ["earring", "earrings"],
+      earrings: ["earring", "earrings"],
+      necklace: ["necklace", "necklaces"],
+      necklaces: ["necklace", "necklaces"],
+      bracelet: ["bracelet", "bracelets"],
+      bracelets: ["bracelet", "bracelets"],
+      diamond: ["diamond"]
+    };
+    const categoryValues = categories[requestedCategory] || ["all"];
+    const allowedSorts = new Set([
+      "featured",
+      "name-asc",
+      "name-desc",
+      "price-low",
+      "price-high"
+    ]);
+    const sortMode = allowedSorts.has(sort) ? sort : "featured";
+
     const result = await pool.query(
       `SELECT id, name, category, description, price, image_url, stock
        FROM public.products
-       ORDER BY created_at DESC`
+       WHERE (
+         $1 = '' OR
+         NOT EXISTS (
+           SELECT 1
+           FROM unnest(regexp_split_to_array(LOWER($1), '\\s+')) AS term
+           WHERE CONCAT_WS(' ', LOWER(name), LOWER(category), LOWER(description))
+             NOT LIKE '%' || term || '%'
+         )
+       )
+       AND (
+         $2::text[] = ARRAY['all']::text[] OR
+         regexp_split_to_array(LOWER(category), '[^a-z]+') && $2::text[] OR
+         (
+           $3 = 'diamond' AND
+           (name ILIKE '%diamond%' OR description ILIKE '%diamond%')
+         )
+       )
+       ORDER BY
+         CASE WHEN $4 = 'name-asc' THEN LOWER(name) END ASC,
+         CASE WHEN $4 = 'name-desc' THEN LOWER(name) END DESC,
+         CASE WHEN $4 = 'price-low' THEN price END ASC,
+         CASE WHEN $4 = 'price-high' THEN price END DESC,
+         CASE WHEN $4 = 'featured' THEN created_at END DESC,
+         id DESC
+       LIMIT CASE WHEN $5::boolean THEN 10 ELSE NULL END`,
+      [search, categoryValues, requestedCategory, sortMode, isNewArrivals]
     );
 
     res.json(result.rows);
@@ -112,6 +191,97 @@ app.get("/api/products", async (req, res) => {
     res.status(500).json({
       message: "Could not load products"
     });
+  }
+});
+
+app.get("/api/products/:productId/reviews", async (req, res) => {
+  const productId = Number(req.params.productId);
+  if (!Number.isInteger(productId) || productId < 1) {
+    return res.status(400).json({ message: "Product ID is invalid." });
+  }
+
+  try {
+    const [reviewsResult, summaryResult] = await Promise.all([
+      pool.query(
+        `SELECT id, reviewer_name, rating, review_text, created_at
+         FROM public.product_reviews
+         WHERE product_id = $1 AND is_approved = TRUE
+         ORDER BY created_at DESC, id DESC
+         LIMIT 100`,
+        [productId]
+      ),
+      pool.query(
+        `SELECT COUNT(*)::integer AS review_count,
+                COALESCE(AVG(rating), 0)::numeric(3,2) AS average_rating
+         FROM public.product_reviews
+         WHERE product_id = $1 AND is_approved = TRUE`,
+        [productId]
+      )
+    ]);
+
+    res.json({
+      reviews: reviewsResult.rows,
+      reviewCount: summaryResult.rows[0].review_count,
+      averageRating: Number(summaryResult.rows[0].average_rating)
+    });
+  } catch (error) {
+    console.error("Could not load product reviews:", error.message);
+    res.status(500).json({ message: "Could not load product reviews." });
+  }
+});
+
+app.post("/api/products/:productId/reviews", async (req, res) => {
+  const productId = Number(req.params.productId);
+  if (!Number.isInteger(productId) || productId < 1) {
+    return res.status(400).json({ message: "Product ID is invalid." });
+  }
+
+  const body = req.body || {};
+  const reviewerName =
+    typeof body.name === "string" ? body.name.trim() : "";
+  const reviewText =
+    typeof body.review === "string" ? body.review.trim() : "";
+  const rating = Number(body.rating);
+  const website =
+    typeof body.website === "string" ? body.website.trim() : "";
+
+  if (website) {
+    return res.status(400).json({ message: "Review could not be submitted." });
+  }
+  if (reviewerName.length < 2 || reviewerName.length > 60) {
+    return res.status(400).json({ message: "Name must be 2–60 characters." });
+  }
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return res.status(400).json({ message: "Choose a rating from 1 to 5." });
+  }
+  if (reviewText.length < 10 || reviewText.length > 1200) {
+    return res.status(400).json({ message: "Review must be 10–1,200 characters." });
+  }
+
+  try {
+    const productResult = await pool.query(
+      "SELECT id FROM public.products WHERE id = $1",
+      [productId]
+    );
+    if (productResult.rowCount === 0) {
+      return res.status(404).json({ message: "Product was not found." });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO public.product_reviews
+         (product_id, reviewer_name, rating, review_text)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, reviewer_name, rating, review_text, created_at`,
+      [productId, reviewerName, rating, reviewText]
+    );
+
+    res.status(201).json({
+      message: "Your review has been added.",
+      review: result.rows[0]
+    });
+  } catch (error) {
+    console.error("Could not submit product review:", error.message);
+    res.status(500).json({ message: "Could not submit your review." });
   }
 });
 
